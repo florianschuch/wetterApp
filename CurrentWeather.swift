@@ -78,17 +78,18 @@ class CurrentWeather {
                     
                     if let currentTemperatur = main["temp"] as? Double {
                         
-                        let KelvinToCelsius = Double(round(currentTemperatur - 273.15))
+                        let kelvinToCelsius = Double(round(currentTemperatur - 273.15))
                         
-                        self._currentTemp = KelvinToCelsius
+                        self._currentTemp = kelvinToCelsius
                         
                         print(self._currentTemp)
                     }
                 }
                 
             }
+            completed()
         }
-        completed()
+
     }
 }
 

@@ -7,6 +7,7 @@
 //
 
 import UIKit
+import Alamofire
 
 class WetterVC: UIViewController, UITableViewDelegate, UITableViewDataSource {
 
@@ -17,9 +18,15 @@ class WetterVC: UIViewController, UITableViewDelegate, UITableViewDataSource {
     @IBOutlet weak var currentWeatherImage: UIImageView!
     @IBOutlet weak var currentWeatherTypeLabel: UILabel!
     @IBOutlet weak var tableView: UITableView!
+    
+    var currentWeather: CurrentWeather!
+    var forecast: Forecast!
+    var forecasts = [Forecast]()
+
+
   
 //  Setup UI to download data
-    var currentWeather = CurrentWeather()
+
     
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -29,12 +36,42 @@ class WetterVC: UIViewController, UITableViewDelegate, UITableViewDataSource {
         tableView.dataSource = self
         
 // DownloadData
+        currentWeather = CurrentWeather()
+
+
         currentWeather.downloadWeatherDetails {
-//            Setup UI for Downloading data
+            self.downloadForecastData {
+            
+            self.updateMainUI()
+        }
+    }
+    }
+    
+//    Download Forecast Information
+    func downloadForecastData(completed: @escaping DownloadComplete) {
+        
+        Alamofire.request(FORECAST_URL).responseJSON { response in
+            let result = response.result
+            
+            if let dict = result.value as? Dictionary<String, AnyObject> {
+                
+                if let list = dict["list"] as? [Dictionary<String, AnyObject>] {
+                    
+                    for obj in list {
+                        let forecast = Forecast(weatherDict: obj)
+                        self.forecasts.append(forecast)
+                        print(obj)
+                    }
+                }
+                
+            }
+            
+            completed()
+            
         }
         
-        
     }
+    
 
 //  Necassary Functions for setting up the table view (how many sections, how many rows and who the dequeuable cell should be
     func numberOfSections(in tableView: UITableView) -> Int {
@@ -50,6 +87,14 @@ class WetterVC: UIViewController, UITableViewDelegate, UITableViewDataSource {
         let cell = tableView.dequeueReusableCell(withIdentifier: "weatherCell", for: indexPath)
         
         return cell
+    }
+    
+    func updateMainUI() {
+        dateLabel.text = currentWeather.date
+        currentTempLabel.text = "\(currentWeather.currentTemp)"
+        locationLabel.text = currentWeather.cityName
+        currentWeatherTypeLabel.text = currentWeather.weatherType
+        currentWeatherImage.image = UIImage(named: currentWeather.weatherType)
     }
     
 }
