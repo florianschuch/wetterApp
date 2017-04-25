@@ -44,5 +44,7 @@
 		<key>NSAllowsArbitraryLoads</key>
 		<true/>
 	</dict>
+	<key>NSLocationWhenInUseUsageDescription</key>
+	<string>Wir benötigen Ihren aktuellen Standpunkt, um Ihre aktuellen Wetterdaten updaten zu können.</string>
 </dict>
 </plist>
