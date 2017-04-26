@@ -16,8 +16,6 @@ class Forecast {
     var _highTemp: String!
     var _lowTemp: String!
     
-
-    
     var date: String {
         if _date == nil {
             _date = ""
@@ -73,25 +71,30 @@ class Forecast {
             }
         }
         
+        if let weather = weatherDict["weather"] as? [Dictionary<String, AnyObject>] {
+            
+            if let main = weather[0]["main"] as? String {
+                self._weatherType = main
+            }
+        }
+        
         if let date = weatherDict["dt"] as? Double {
             
-            let UnixConvertedDate = Date(timeIntervalSince1970: date)
+            let unixConvertedDate = Date(timeIntervalSince1970: date)
             let dateFormatter = DateFormatter()
             dateFormatter.dateStyle = .full
             dateFormatter.dateFormat = "EEEE"
             dateFormatter.timeStyle = .none
-            
-            self._date = UnixConvertedDate.dayOfTheWeek()
+            self._date = unixConvertedDate.dayOfTheWeek()
         }
         
     }
-    
-
 }
+
 extension Date {
     func dayOfTheWeek() -> String {
         let dateFormatter = DateFormatter()
         dateFormatter.dateFormat = "EEEE"
-        return dateFormatter.string(from:self)
+        return dateFormatter.string(from: self)
     }
 }

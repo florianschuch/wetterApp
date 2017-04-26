@@ -9,6 +9,8 @@
 import UIKit
 import Alamofire
 
+
+
 class CurrentWeather {
     var _cityName: String!
     var _date: String!

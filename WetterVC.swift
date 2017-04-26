@@ -24,20 +24,15 @@ class WetterVC: UIViewController, UITableViewDelegate, UITableViewDataSource, CL
     let locationManager = CLLocationManager()
     var currentLocation: CLLocation!
  
-    
-    
+
     var currentWeather: CurrentWeather!
     var forecast: Forecast!
     var forecasts = [Forecast]()
 
-
-  
-//  Setup UI to download data
-
     
     override func viewDidLoad() {
         super.viewDidLoad()
-        
+
 //  Location Function
         locationManager.delegate = self
         locationManager.desiredAccuracy = kCLLocationAccuracyBest
@@ -66,11 +61,8 @@ class WetterVC: UIViewController, UITableViewDelegate, UITableViewDataSource, CL
             currentLocation = locationManager.location
             Location.sharedInstance.latitude = currentLocation.coordinate.latitude
             Location.sharedInstance.longitude = currentLocation.coordinate.longitude
-            print(Location.sharedInstance.latitude, Location.sharedInstance
-            .longitude)
             currentWeather.downloadWeatherDetails {
                 self.downloadForecastData {
-                    
                     self.updateMainUI()
                 }
             }
@@ -79,10 +71,11 @@ class WetterVC: UIViewController, UITableViewDelegate, UITableViewDataSource, CL
             locationAuthStatus()
         }
     }
-    
-//    Download Forecast Information
+
+
+//  Download Forecast Information
     func downloadForecastData(completed: @escaping DownloadComplete) {
-        
+        //Downloading forecast weather data for TableView
         Alamofire.request(FORECAST_URL).responseJSON { response in
             let result = response.result
             
@@ -98,13 +91,9 @@ class WetterVC: UIViewController, UITableViewDelegate, UITableViewDataSource, CL
                     self.forecasts.remove(at: 0)
                     self.tableView.reloadData()
                 }
-                
             }
-            
             completed()
-            
         }
-        
     }
     
 
@@ -112,7 +101,7 @@ class WetterVC: UIViewController, UITableViewDelegate, UITableViewDataSource, CL
     func numberOfSections(in tableView: UITableView) -> Int {
         return 1
     }
-
+    
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return forecasts.count
     }
@@ -124,8 +113,6 @@ class WetterVC: UIViewController, UITableViewDelegate, UITableViewDataSource, CL
             let forecast = forecasts[indexPath.row]
             cell.configureCell(forecast: forecast)
             return cell
-            
-            
         } else {
             return WeatherCell()
         }
@@ -134,10 +121,11 @@ class WetterVC: UIViewController, UITableViewDelegate, UITableViewDataSource, CL
     func updateMainUI() {
         dateLabel.text = currentWeather.date
         currentTempLabel.text = "\(currentWeather.currentTemp)"
-        locationLabel.text = currentWeather.cityName
         currentWeatherTypeLabel.text = currentWeather.weatherType
+        locationLabel.text = currentWeather.cityName
         currentWeatherImage.image = UIImage(named: currentWeather.weatherType)
     }
     
 }
+
 
